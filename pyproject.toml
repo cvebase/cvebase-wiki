@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "cvebase-wiki"
+version = "0.1.0"
+description = "cvebase's command line tool for interacting with cvebase.com wiki data"
+authors = ["cvebase <hello@cvebase.com>"]
+maintainers = ["cvebase <hello@cvebase.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://www.cvebase.com/"
+repository = "https://github.com/cvebase/cvebase-wiki"
+keywords = [
+    "cvebase",
+    "cve",
+    "infosec",
+    "wiki",
+    "vulnerabilities",
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+click = "^7.1.2"
+rich = "^9.2.0"
+cvebased = "^0.1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[tool.poetry.scripts]
+cvebase-wiki = 'cvebase_wiki.cvebase_wiki:cli'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
