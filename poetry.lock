@@ -49,7 +49,7 @@ test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
 
 [[package]]
 name = "cvebased"
-version = "0.1.1"
+version = "0.1.2"
 description = "A utility library to ease interactions with cvebase.com data"
 category = "main"
 optional = false
@@ -202,7 +202,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "049c7f6d364eb5f60d02c64076674543a78f8d0528b04e47e697b47e704acecb"
+content-hash = "2273b9fc8bdf5581f4ffb957d30a307c8d3d1b9a3d3302f484921649aa7fb7fc"
 
 [metadata.files]
 atomicwrites = [
@@ -226,8 +226,8 @@ commonmark = [
     {file = "commonmark-0.9.1.tar.gz", hash = "sha256:452f9dc859be7f06631ddcb328b6919c67984aca654e5fefb3914d54691aed60"},
 ]
 cvebased = [
-    {file = "cvebased-0.1.1-py3-none-any.whl", hash = "sha256:06ecf47326ca24d2834dc1e9385c4c509cde27eb72f407a95bb994aa5e523493"},
-    {file = "cvebased-0.1.1.tar.gz", hash = "sha256:42888574530444d98c0091f75b73b1bd1d3958ea3f6c6c89ac6c85bf6a82afb5"},
+    {file = "cvebased-0.1.2-py3-none-any.whl", hash = "sha256:985608b2065d6011265199fa01856ca182b875d6d96621db1d780fea59ae84ae"},
+    {file = "cvebased-0.1.2.tar.gz", hash = "sha256:3fb8736eaee6adc2b0dc817952a0c752e149d3e40fd57c9e645b76a6e37009e4"},
 ]
 more-itertools = [
     {file = "more-itertools-8.6.0.tar.gz", hash = "sha256:b3a9005928e5bed54076e6e549c792b306fddfe72b2d1d22dd63d42d5d3899cf"},

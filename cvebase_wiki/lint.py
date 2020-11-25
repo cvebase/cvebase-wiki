@@ -3,6 +3,7 @@ import os
 from rich.progress import Progress, TaskID
 from concurrent.futures import ThreadPoolExecutor
 from cvebased.repo import counttree, scantree, parse_md, write_md
+from typing import Callable
 
 progress = Progress()
 
@@ -28,7 +29,7 @@ def lint(repo: str) -> None:
             progress.start_task(task1)
             for entry in scantree(path_to_cves, '.md'):
                 try:
-                    pool.submit(process_cve, task1, entry.path)
+                    pool.submit(process_md, task1, entry.path, check_cve_front_matter)
                 except Exception as e:
                     print(e)
                     continue
@@ -37,22 +38,10 @@ def lint(repo: str) -> None:
             progress.start_task(task2)
             for entry in scantree(path_to_researchers, '.md'):
                 try:
-                    pool.submit(process_researcher, task2, entry.path)
+                    pool.submit(process_md, task2, entry.path, check_researcher_front_matter)
                 except Exception as e:
                     print(e)
                     continue
-
-
-def process_cve(task_id: TaskID, filepath: str) -> None:
-    with open(filepath, 'r') as f:
-        ex_yaml, ex_md = parse_md(f.read())
-        f.close()
-    try:
-        mod_yaml = check_cve_front_matter(ex_yaml)
-    except Exception as e:
-        raise Exception(f"error {filepath}: {e}")
-    write_md(filepath, mod_yaml, ex_md)
-    progress.update(task_id, advance=1)
 
 
 def check_cve_front_matter(y: dict) -> dict:
@@ -77,16 +66,17 @@ def check_cve_front_matter(y: dict) -> dict:
     return y
 
 
-def process_researcher(task_id: TaskID, filepath: str) -> None:
+def process_md(task_id: TaskID, filepath: str, check_front_matter_fn: Callable) -> None:
     with open(filepath, 'r') as f:
-        ex_yaml, ex_md = parse_md(f.read())
-        f.close()
-    try:
-        mod_yaml = check_researcher_front_matter(ex_yaml)
-    except Exception as e:
-        raise Exception(f"error {filepath}: {e}")
-    write_md(filepath, mod_yaml, ex_md)
-    progress.update(task_id, advance=1)
+        try:
+            ex_yaml, ex_md = parse_md(f.read())
+            mod_yaml = check_front_matter_fn(ex_yaml)
+            write_md(filepath, mod_yaml, ex_md)
+        except Exception as e:
+            print(e)
+        finally:
+            f.close()
+            progress.update(task_id, advance=1)
 
 
 def check_researcher_filename(filepath: str, alias: str) -> str:

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cvebase-wiki"
-version = "0.1.1"
+version = "0.1.2"
 description = "cvebase's command line tool for interacting with cvebase.com wiki data"
 authors = ["cvebase <hello@cvebase.com>"]
 maintainers = ["cvebase <hello@cvebase.com>"]
@@ -20,7 +20,8 @@ keywords = [
 python = "^3.8"
 click = "^7.1.2"
 rich = "^9.2.0"
-cvebased = "^0.1.1"
+cvebased = "^0.1.2"
+#cvebased = {path = '../cvebased', develop = true}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
