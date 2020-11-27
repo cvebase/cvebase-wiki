@@ -20,7 +20,7 @@ keywords = [
 python = "^3.8"
 click = "^7.1.2"
 rich = "^9.2.0"
-cvebased = "^0.1.2"
+cvebased = "^0.1.7"
 #cvebased = {path = '../cvebased', develop = true}
 
 [tool.poetry.dev-dependencies]

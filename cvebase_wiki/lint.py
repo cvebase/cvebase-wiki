@@ -69,9 +69,10 @@ def check_cve_front_matter(y: dict) -> dict:
 def process_md(task_id: TaskID, filepath: str, check_front_matter_fn: Callable) -> None:
     with open(filepath, 'r') as f:
         try:
-            ex_yaml, ex_md = parse_md(f.read())
+            file_str = f.read()
+            ex_yaml, ex_md = parse_md(file_str)
             mod_yaml = check_front_matter_fn(ex_yaml)
-            write_md(filepath, mod_yaml, ex_md)
+            write_md(filepath, mod_yaml, ex_md, file_str)
         except Exception as e:
             print(e)
         finally:
