@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cvebase-wiki"
-version = "0.1.2"
+version = "0.1.3"
 description = "cvebase's command line tool for interacting with cvebase.com wiki data"
 authors = ["cvebase <hello@cvebase.com>"]
 maintainers = ["cvebase <hello@cvebase.com>"]
