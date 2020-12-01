@@ -23,6 +23,7 @@ rich = "^9.2.0"
 cvebased = "^0.1.7"
 #cvebased = {path = '../cvebased', develop = true}
 
+python-editor = "^1.0.4"
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 
