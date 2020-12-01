@@ -2,8 +2,11 @@ import click
 import os
 from rich.progress import Progress, TaskID
 from concurrent.futures import ThreadPoolExecutor
-from cvebased.repo import counttree, scantree, parse_md, write_md
-from typing import Callable
+from cvebased.repo import (
+    counttree, scantree, parse_md, write_md, object_to_yaml_str
+)
+from typing import Callable, Dict
+from ruamel import yaml
 
 progress = Progress()
 
@@ -19,11 +22,13 @@ def lint(repo: str) -> None:
     """Lint files in cvebase.com repo"""
 
     path_to_cves = os.path.join(repo, "cve")
+    path_to_cves_tags = os.path.join(repo, "cve", "tag")
     path_to_researchers = os.path.join(repo, "researcher")
 
     with progress:
         task1 = progress.add_task("[cyan]Linting CVEs...", start=False)
         task2 = progress.add_task("[cyan]Linting Researchers...", start=False)
+        task3 = progress.add_task("[cyan]Linting CVE Tags...", start=False)
         with ThreadPoolExecutor() as pool:
             progress.update(task1, total=counttree(path_to_cves, '.md'))
             progress.start_task(task1)
@@ -39,6 +44,15 @@ def lint(repo: str) -> None:
             for entry in scantree(path_to_researchers, '.md'):
                 try:
                     pool.submit(process_md, task2, entry.path, check_researcher_front_matter)
+                except Exception as e:
+                    print(e)
+                    continue
+
+            progress.update(task3, total=counttree(path_to_cves_tags, '.yaml'))
+            progress.start_task(task3)
+            for entry in scantree(path_to_cves_tags, '.yaml'):
+                try:
+                    pool.submit(process_yaml, task3, entry.path, check_cves_tag)
                 except Exception as e:
                     print(e)
                     continue
@@ -80,6 +94,31 @@ def process_md(task_id: TaskID, filepath: str, check_front_matter_fn: Callable) 
             progress.update(task_id, advance=1)
 
 
+def process_yaml(task_id: TaskID, filepath: str, check_front_matter_fn: Callable) -> None:
+    with open(filepath, 'r') as f:
+        try:
+            file_str = f.read()
+            ex_yaml = yaml.load(file_str, Loader=yaml.Loader)
+        except Exception as e:
+            print(e)
+        finally:
+            f.close()
+
+    mod_yaml = check_front_matter_fn(ex_yaml)
+
+    write_str = "---\n"
+    write_str += object_to_yaml_str(mod_yaml)
+    if write_str != file_str:
+        with open(filepath, 'w+') as file:
+            file.seek(0)
+            file.write(write_str)
+            file.truncate()
+            file.close()
+            f.close()
+
+    progress.update(task_id, advance=1)
+
+
 def check_researcher_filename(filepath: str, alias: str) -> str:
     """Check researcher alias matches existing filepath
     and rename file is researcher alias does not match filename"""
@@ -93,6 +132,20 @@ def check_researcher_filename(filepath: str, alias: str) -> str:
 
 def check_researcher_front_matter(y: dict) -> dict:
     keys = ['name', 'alias', 'cves']
+    for k in keys:
+        if k not in y.keys():
+            raise Exception(f"{k} missing")
+
+    if len(y['cves']) < 1:
+        raise Exception("no cves defined in cves field")
+
+    y['cves'] = dedupe_sort(y['cves'])
+
+    return y
+
+
+def check_cves_tag(y: Dict) -> Dict:
+    keys = ['name', 'slug', 'description', 'cves']
     for k in keys:
         if k not in y.keys():
             raise Exception(f"{k} missing")
